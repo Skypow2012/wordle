@@ -206,20 +206,25 @@
       var nowId = 1;
       var checkCnt = 0;
 
-      function getBoxZis(size=10) {
+      function getBoxZis(size=10, true_size=2) {
         var box = document.querySelector('#box');
         var box_zis = []
-        var true_zi = tarCy[Math.random() * tarCy.length | 0];
-        var true_idx = Math.random() * size | 0;
-        while (box_zis.length < size) {
-          if (box_zis.length === true_idx) {
-            box_zis.push(true_zi);
-            continue;
-          }
+        var true_cy_idxs = []
+        while (box_zis.length < size) { // 随机取对应值
           var other_cy = cys[Math.random() * cys.length | 0];
           var other_zi = other_cy[Math.random() * other_cy.length | 0].replace(/\s/g, '');
-          if (box_zis.indexOf(other_zi) == -1 && other_zi != true_zi) {
+          if (box_zis.indexOf(other_zi) == -1) {
             box_zis.push(other_zi);
+          }
+        }
+        var true_num = 0;
+        var true_idxs = []
+        while (true_num < true_size) {
+          rand_zi = tarCy[Math.random() * tarCy.length | 0].replace(/\s/g, '');
+          rand_idx = Math.random() * box_zis.length | 0;
+          if (box_zis.indexOf(rand_zi) === -1 && true_idxs.indexOf(rand_idx) === -1) {
+            box_zis[rand_idx] = rand_zi
+            true_num++
           }
         }
         for (var i = 0; i < box_zis.length; i++) {
