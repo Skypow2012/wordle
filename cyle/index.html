@@ -137,7 +137,7 @@
     <div id="cyid" onclick="setId()"></div>
   </div>
   <script>
-      console.log('汉字'.spell());
+      console.log('你好呀，程序员，可以加我微信一起交流：maqijun123456');
       var tarCy = '天下第一';
       var isRandom = true
       if (isRandom) {
@@ -172,9 +172,7 @@
             continue;
           }
           var other_cy = cys[Math.random() * cys.length | 0];
-          console.log(other_cy)
           var other_zi = other_cy[Math.random() * other_cy.length | 0].replace(/\s/g, '');
-          console.log(other_zi)
           if (box_zis.indexOf(other_zi) == -1 && other_zi != true_zi) {
             box_zis.push(other_zi);
           }
@@ -214,7 +212,6 @@
         var pyArr = checkPy(value, tarCy);
         var locArr = checkLoc(value, tarCy);
         var eqlArr = checkEql(value, tarCy);
-        console.log(pyArr, locArr, eqlArr)
         update_cy('');
         update_cy(nowId);
         function update_cy(nowId) {
@@ -231,7 +228,6 @@
             if (locArr[i]) zi_ele.classList.add('loc');
             if (eqlArr[i]) zi_ele.classList.add('eql');
             var box_zis_num = box_zis.indexOf(zi) + 1;
-            console.log(box_zis_num, '#box .zi.z'+box_zis_num)
             if (box_zis_num > 0) {
               var box_zi_ele = document.querySelector('#box .zi.z'+box_zis_num);
               if (eqlArr[i] && box_zi_ele.className.indexOf('eql') === -1) {
