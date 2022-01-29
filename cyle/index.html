@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="./js/cys2.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
+  <script src="/log?type=cydl&remark=new"></script>
   <title>成语le</title>
   <style>
     body {
@@ -20,7 +20,7 @@
       padding-top: 36px;
       max-width: 800px;
       margin: auto;
-      height: calc(100vh - 48px);
+      height: calc(100vh - 58px);
     }
     #root.default {
       --background: #ffffff;
@@ -58,6 +58,10 @@
     }
     .chengyu:first-child {
       margin-left: 0px;
+    }
+    #history {
+      height: calc(100vh - 360px);
+      overflow: auto;
     }
     .zi {
       display: inline-block;
@@ -186,42 +190,7 @@
     <div class="chengyu" id="box"></div>
     <input id="input" onsubmit="check()"></input>
     <button onclick="check()">提交</button>
-    <div class="chengyu" id="c1" style="display: none;">
-      <div class="zi z1"></div>
-      <div class="zi z2"></div>
-      <div class="zi z3"></div>
-      <div class="zi z4"></div>
-    </div>
-    <div class="chengyu" id="c2" style="display: none;">
-      <div class="zi z1"></div>
-      <div class="zi z2"></div>
-      <div class="zi z3"></div>
-      <div class="zi z4"></div>
-    </div>
-    <div class="chengyu" id="c3" style="display: none;">
-      <div class="zi z1"></div>
-      <div class="zi z2"></div>
-      <div class="zi z3"></div>
-      <div class="zi z4"></div>
-    </div>
-    <div class="chengyu" id="c4" style="display: none;">
-      <div class="zi z1"></div>
-      <div class="zi z2"></div>
-      <div class="zi z3"></div>
-      <div class="zi z4"></div>
-    </div>
-    <div class="chengyu" id="c5" style="display: none;">
-      <div class="zi z1"></div>
-      <div class="zi z2"></div>
-      <div class="zi z3"></div>
-      <div class="zi z4"></div>
-    </div>
-    <div class="chengyu" id="c6" style="display: none;">
-      <div class="zi z1"></div>
-      <div class="zi z2"></div>
-      <div class="zi z3"></div>
-      <div class="zi z4"></div>
-    </div>
+    <div id="history"></div>
     <div id="cyid" onclick="setId()"></div>
     <!-- <div id="fx" onclick="share()">分享</div> -->
     <div id="fk" onclick="feedback()">反馈</div>
@@ -378,8 +347,24 @@
         var eqlArr = checkEql(value, tarCy);
         update_cy('');
         update_cy(nowId);
+        function newC(id) {
+          var c_ele = document.createElement('div')
+          c_ele.className = "chengyu";
+          c_ele.id = "c"+id;
+          c_ele.innerHTML = `
+            <div class="zi z1"></div>
+            <div class="zi z2"></div>
+            <div class="zi z3"></div>
+            <div class="zi z4"></div>
+          `
+          var history_ele = document.getElementById('history');
+          history_ele.appendChild(c_ele);
+          return c_ele;
+        }
         function update_cy(nowId) {
-          document.querySelector('#c'+nowId).style.display = 'block';
+          var ci_ele = document.querySelector('#c' + nowId);
+          if (!ci_ele) ci_ele = newC(nowId);
+          ci_ele.style.display = 'block';
           for (var i = 0; i < 4; i++) {
             var num = i + 1;
             var zi = value[i];
@@ -417,7 +402,7 @@
           });
           
         } else if (nowId >= 6) {
-          nowId = 0; // 从头开始记录
+          // nowId = 0; // 从头开始记录
           // setTimeout(()=>{alert(tarCy)}); // 给答案
           // return;
         }
