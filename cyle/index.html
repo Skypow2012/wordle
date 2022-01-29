@@ -245,7 +245,13 @@
         }
         var isPass = eqlArr[0] && eqlArr[1] && eqlArr[2] && eqlArr[3] && locArr[0] && locArr[1] && locArr[2] && locArr[3];
         if (isPass) {
-          setTimeout(()=>{alert('恭喜你，答对了！');});
+          setTimeout(()=>{
+            alert('恭喜你，答对了！');
+            if (confirm('想看看 '+tarCy+' 的具体解释么？')) {
+              window.location.href = 'https://hanyu.baidu.com/zici/s?wd=' + encodeURIComponent(tarCy);
+            }
+          });
+          
         } else if (nowId >= 6) {
           nowId = 0; // 从头开始记录
           // setTimeout(()=>{alert(tarCy)}); // 给答案
