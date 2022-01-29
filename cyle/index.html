@@ -88,19 +88,24 @@
     #input {
       margin: 10px 0px;
     }
-    #cyid {
-      position: absolute;
-      display: inline-block;
-      width: 80px;
-      top: 0;
-      right: 0;
-    }
+    #fk,
+    #cyid,
     #fx {
       position: absolute;
       display: inline-block;
       width: 80px;
       top: 0;
+      margin: auto;
+    }
+    #fk {
       left: 0;
+    }
+    #cyid {
+      /* left: 0; */
+      right: 0;
+    }
+    #fx {
+      right: 0;
     }
     .hide {
       position: absolute;
@@ -156,13 +161,14 @@
       <div class="zi z4"></div>
     </div>
     <div id="cyid" onclick="setId()"></div>
-    <div id="fx" onclick="share()">分享</div>
+    <!-- <div id="fx" onclick="share()">分享</div> -->
+    <div id="fk" onclick="feedback()">反馈</div>
   </div>
   <script>
       console.log('你好呀，程序员，可以加我微信一起交流：maqijun123456');
       var tarCy = '天下第一';
       var isRandom = true
-      var randomId;
+      var cyid;
       var isChinaYear = false;
       var isPyMode = false;
       if (isChinaYear) {
@@ -174,13 +180,16 @@
       }
       if (isRandom) {
         if (window.location.href.indexOf('cyid') > -1) {
-          randomId = window.location.href.match(/cyid=(\d*)/)[1]
+          cyid = window.location.href.match(/cyid=(\d*)/)[1]
         } else {
-          randomId = Math.random()*cys.length|0;
-          // window.history.pushState({id: 1,name: "SpecialGame"}, "SpecialGame", "/cyle/?cyid="+randomId);
+          cyid = Math.random()*cys.length|0;
+          if (window.location.href.indexOf('tekii.cn') > -1) {
+            window.history.pushState({id: 1,name: "SpecialGame"}, "SpecialGame", "/cyle/?cyid="+cyid);
+          }
         }
-        cyid.innerHTML = randomId;
-        tarCy = cys[randomId];
+        var cyid_ele = document.getElementById('cyid');
+        cyid_ele.innerHTML = cyid;
+        tarCy = cys[cyid];
         document.querySelector('.z1').innerHTML = '';
       }
       function setId() {
@@ -200,8 +209,25 @@
           document.execCommand("Copy"); //执行浏览器复制命令
           document.body.removeChild(oInput)
         }
-        copy(window.location.host+"/cyle/?cyid="+randomId)
+        copy(window.location.host+"/cyle/?cyid="+cyid)
         alert('已将本成语对应的网址复制到剪切板，可以粘贴分享给朋友们了')
+      }
+      function feedback() {
+        var fk = prompt('请输入反馈内容');
+        if (!fk) return;
+        var name = localStorage.name || prompt('请输入您的称呼或联系方式(方便后续区分)，仅需输入一次');
+        localStorage.name = name;
+        if (fk) {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', '//tekii.cn/log?type=cydl&remark='+fk + '|' + name + '|' + cyid, true);
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.send('');
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              alert('反馈成功，感谢您的反馈！')
+            }
+          }
+        }
       }
       var nowId = 1;
       var checkCnt = 0;
@@ -294,6 +320,9 @@
         if (isPass) {
           setTimeout(()=>{
             alert('恭喜你，答对了！');
+            if (window.location.href.indexOf('tekii.cn') > -1) { // 可以去新的关卡了
+              window.history.pushState({id: 1,name: "SpecialGame"}, "SpecialGame", "/cyle/");
+            }
             if (confirm('想看看 '+tarCy+' 的具体解释么？')) {
               window.location.href = 'https://hanyu.baidu.com/zici/s?wd=' + encodeURIComponent(tarCy);
             }
