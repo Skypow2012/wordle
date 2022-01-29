@@ -128,6 +128,9 @@
     #close-help {
       width: 60px;
       right: 0;
+      background: var(--background);
+      border-radius: 4px;
+      z-index: 1;
     }
     #fx {
       right: 0;
@@ -142,8 +145,7 @@
       right: 0;
       bottom: 0;
       left: 0;
-      padding: 4px;
-      overflow: auto;
+      overflow: hidden;
       margin: auto;
       box-shadow: 2px 2px 5px 2px;
       width: 90%;
@@ -151,6 +153,18 @@
       text-align: center;
       background: #ffffff;
       border-radius: 4px;
+    }
+    #help #help-container {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: inline-block;
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+      padding: 4px;
+      height: 100%;
+      overflow: auto;
     }
     .img {
       width: 100%;
@@ -197,6 +211,7 @@
     <div id="help-icon" onclick="openHelp()">❓</div>
     <div id="help" style="display: none;">
       <div id="close-help" onclick="closeHelp()">关闭</div>
+      <div id="help-container">
       <div>
         <h2>盲猜成语游戏规则</h2>
 <p>1. 猜的必须为成语，猜一次点击“提交”，系统自动存档，非成语会提示“请输入正确的成语”且该次不存档</p>
@@ -205,6 +220,7 @@
 <p>4. 每次猜成语后，备选区用过的字以及猜的成语中的字会变颜色，具体颜色变化会在下方图片中说明</p>
       </div>
       <img class="img" src="img/help2.jpg"/>
+      </div>
     </div>
   </div>
   </div>
