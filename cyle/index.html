@@ -78,6 +78,13 @@
     #input {
       margin: 10px 0px;
     }
+    #cyid {
+      position: absolute;
+      display: inline-block;
+      width: 80px;
+      top: 0;
+      right: 0;
+    }
   </style>
 </head>
 <body>
@@ -127,14 +134,29 @@
       <div class="zi z3"></div>
       <div class="zi z4"></div>
     </div>
+    <div id="cyid" onclick="setId()"></div>
   </div>
   <script>
       console.log('汉字'.spell());
       var tarCy = '天下第一';
-      var isRandom = window.location.href.indexOf('random') > -1
+      var isRandom = true
       if (isRandom) {
-        tarCy = cys[Math.random()*cys.length|0];
+        var randomId;
+        if (window.location.href.indexOf('cyid') > -1) {
+          randomId = window.location.href.match(/cyid=(\d*)/)[1]
+        } else {
+          randomId = Math.random()*cys.length|0;
+          window.history.pushState({id: 1,name: "SpecialGame"}, "SpecialGame", "/cyle/?cyid="+randomId);
+        }
+        cyid.innerHTML = randomId;
+        tarCy = cys[randomId];
         document.querySelector('.z1').innerHTML = '';
+      }
+      function setId() {
+        var specialCyId = prompt('请输入成语id');
+        if (specialCyId) {
+          window.location.href = "/cyle/?cyid="+specialCyId
+        }
       }
       var nowId = 1;
       var checkCnt = 0;
