@@ -18,10 +18,25 @@
       --drop-color: #cccccc;
       --py-color: #12171b;
       --eql-color: #e1d791;
+      --eql-background: #e1d791;
       --font-size: 28px;
+      --border-color: #efefef;
+      --zi-border-width: 0px;
+    }
+    #root {
+      --background: #ffffff;
+      --loc-background: #69a86a;
+      --eql-background: #c9b457;
+      --eql-color: #ffffff;
+      --loc-color: #ffffff;
+      --color: #1c1c1c;
+      --border-color: #7b7b7b;
+      --drop-color: #ffffff;
+      --drop-background: #7d7d7d;
+      --zi-border-width: 2px;
     }
     #box {
-      border: 2px solid var(--background);
+      border: 2px solid var(--border-color);
       padding: 2px;
       margin-top: 2px;
     }
@@ -42,18 +57,23 @@
       vertical-align: middle;
       line-height: 60px;
       font-size: var(--font-size);
+      border: 2px solid var(--border-color);
+      border-width: var(--zi-border-width);
     }
     .zi.py {
       color: var(--py-color) 
     }
-    .zi.loc {
-      background-color: var(--loc-background) 
-    }
     .zi.eql {
-      color: var(--eql-color)
+      color: var(--eql-color);
+      background: var(--eql-background);
+    }
+    .zi.loc {
+      color: var(--loc-color);
+      background: var(--loc-background) 
     }
     .zi.drop {
-      color: var(--drop-color)
+      color: var(--drop-color);
+      background: var(--drop-background);
     }
     #input {
       margin: 10px 0px;
@@ -185,7 +205,7 @@
             zi_ele.classList.remove('py');
             zi_ele.classList.remove('loc');
             zi_ele.classList.remove('eql');
-            if (pyArr[i]) zi_ele.classList.add('py');
+            // if (pyArr[i]) zi_ele.classList.add('py');
             if (locArr[i]) zi_ele.classList.add('loc');
             if (eqlArr[i]) zi_ele.classList.add('eql');
             var box_zis_num = box_zis.indexOf(zi) + 1;
@@ -228,7 +248,8 @@
         // 位置，一样则底色变红
         var checkArr = []
         for (var i = 0; i < 4; i++) {
-          var isLoc = src[i].spell()[0] === tar[i].spell()[0]
+          // var isLoc = src[i].spell()[0] === tar[i].spell()[0] // 首字母对就算对
+          var isLoc = src[i] === tar[i] // 字一样才算对
           checkArr.push(isLoc)
         }
         return checkArr
