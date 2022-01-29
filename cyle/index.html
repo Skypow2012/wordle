@@ -4,24 +4,131 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="./js/cys.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
   <title>成语le</title>
+  <style>
+    #root {
+      --background: #efefef;
+      --loc-background: #c22828;
+      --color: #999999;
+      --py-color: #12171b;
+      --eql-color: #e1d791;
+      --font-size: 28px
+    }
+    .zi {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      color: var(--color);
+      background-color: var(--background);
+      text-align: center;
+      vertical-align: middle;
+      line-height: 60px;
+      font-size: var(--font-size);
+    }
+    .zi.py {
+      color: var(--py-color) 
+    }
+    .zi.loc {
+      background-color: var(--loc-background) 
+    }
+    .zi.eql {
+      color: var(--eql-color)
+    }
+    #input {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
+  <div class="box" id="root">
+    <div class="chengyu" id="c1">
+      <div class="zi z1">天</div>
+      <div class="zi z2"></div>
+      <div class="zi z3"></div>
+      <div class="zi z4"></div>
+    </div>
+  </div>
   <input id="input"></input>
-  <button onclick="check">提交</button>
+  <button onclick="check()">提交</button>
   <script>
       console.log('汉字'.spell());
+      var tarCy = '天下第一';
+      var nowId = '1';
+
+      function check() {
+        var input = document.getElementById('input');
+        var value = input.value || '';
+        if (value.length === 0) {
+          alert('请输入成语');
+          return;
+        }
+        if (value.length < 4) {
+          alert('成语长度不够');
+          return;
+        }
+        if (value.length > 4) {
+          alert('成语长度太长');
+          return;
+        }
+        if (!checkIsCy(value)) {
+          alert('请输入正确的成语');
+          return;
+        }
+        var pyArr = checkPy(value, tarCy);
+        var locArr = checkLoc(value, tarCy);
+        var eqlArr = checkEql(value, tarCy);
+        console.log(pyArr, locArr, eqlArr)
+        for (var i = 0; i < 4; i++) {
+          var num = i + 1;
+          var zi = document.querySelector('#c' + nowId + ' .zi.z' + num);
+          zi.innerHTML = value[i];
+          zi.classList.remove('py');
+          zi.classList.remove('loc');
+          zi.classList.remove('eql');
+          if (pyArr[i]) zi.classList.add('py');
+          if (locArr[i]) zi.classList.add('loc');
+          if (eqlArr[i]) zi.classList.add('eql');
+        }
+      }
 
       // 默认白底灰字
-      function checkPy() {
+      function checkPy(src, tar) {
         // 首字母，一样则颜色变黑
+        var checkArr = []
+        for (var i = 0; i < 4; i++) {
+          var isPy = false;
+          for (var j = 0; j < 4; j++) {
+            if (!isPy) isPy = src[i].spell()[0] === tar[j].spell()[0] // 有一个判断对就算对
+          }
+          checkArr.push(isPy);
+        }
+        return checkArr
       }
-      function checkLoc() {
+      function checkLoc(src, tar) {
         // 位置，一样则底色变红
+        var checkArr = []
+        for (var i = 0; i < 4; i++) {
+          var isLoc = src[i].spell()[0] === tar[i].spell()[0]
+          checkArr.push(isLoc)
+        }
+        return checkArr
       }
-      function checkEql() {
+      function checkEql(src, tar) {
         // 同字，一样则颜色变金
+        var checkArr = []
+        for (var i = 0; i < 4; i++) {
+          var isEql = false;
+          for (var j = 0; j < 4; j++) {
+            if(!isEql) isEql = src[i] === tar[j] // 有一个判断对就算对
+          }
+          checkArr.push(isEql);
+        }
+        return checkArr
+      }
+      function checkIsCy(src) {
+        return cys.indexOf(src) > -1;
       }
   </script>
   <script>
