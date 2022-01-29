@@ -286,7 +286,7 @@
         alert('已将本成语对应的网址复制到剪切板，可以粘贴分享给朋友们了')
       }
       function feedback() {
-        var fk = prompt('请输入反馈内容');
+        var fk = prompt('请输入反馈内容（不要带emoji哈）');
         if (!fk) return;
         var name = localStorage.name || prompt('请输入您的称呼或联系方式(方便后续区分)，仅需输入一次');
         localStorage.name = name;
@@ -296,8 +296,12 @@
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
           xhr.send('');
           xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-              alert('反馈成功，感谢您的反馈！')
+            if (xhr.readyState == 4) {
+              if (xhr.status == 200) {
+                alert('反馈成功，感谢您的反馈！')
+              } else {
+                alert('失败了T^T，可能是网络问题，也可能是反馈内容包含了无法识别的表情')
+              }
             }
           }
         }
@@ -375,6 +379,7 @@
           `
           var history_ele = document.getElementById('history');
           history_ele.appendChild(c_ele);
+          history_ele.scrollTop = history_ele.scrollHeight
           return c_ele;
         }
         function update_cy(nowId) {
