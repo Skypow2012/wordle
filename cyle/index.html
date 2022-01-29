@@ -247,8 +247,9 @@
         if (isPass) {
           setTimeout(()=>{alert('恭喜你，答对了！');});
         } else if (nowId >= 6) {
-          setTimeout(()=>{alert(tarCy)});
-          return;
+          nowId = 0; // 从头开始记录
+          // setTimeout(()=>{alert(tarCy)}); // 给答案
+          // return;
         }
         nowId++;
       }
