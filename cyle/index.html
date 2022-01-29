@@ -10,20 +10,9 @@
   <style>
     body {
       text-align: center;
+      padding-top: 10px;
     }
-    #root {
-      --background: #efefef;
-      --loc-background: #c22828;
-      --color: #999999;
-      --drop-color: #cccccc;
-      --py-color: #12171b;
-      --eql-color: #e1d791;
-      --eql-background: #e1d791;
-      --font-size: 28px;
-      --border-color: #efefef;
-      --zi-border-width: 0px;
-    }
-    #root {
+    #root.default {
       --background: #ffffff;
       --loc-background: #69a86a;
       --eql-background: #c9b457;
@@ -33,7 +22,21 @@
       --border-color: #7b7b7b;
       --drop-color: #ffffff;
       --drop-background: #7d7d7d;
+      --font-size: 28px;
       --zi-border-width: 2px;
+    }
+    #root.china-year {
+      --background: #efefef;
+      --loc-background: #c22828;
+      --color: #999999;
+      --py-color: #12171b;
+      --eql-color: #e1d791;
+      --eql-background: none;
+      --font-size: 28px;
+      --border-color: #efefef;
+      --drop-color: #cccccc;
+      --drop-background: var(--background);
+      --zi-border-width: 0px;
     }
     #box {
       border: 2px solid var(--border-color);
@@ -61,15 +64,22 @@
       border-width: var(--zi-border-width);
     }
     .zi.py {
-      color: var(--py-color) 
+      color: var(--py-color);
+    }
+    .zi.loc {
+      background: var(--loc-background) 
+    }
+    #root.default .zi.loc {
+      color: var(--loc-color);
     }
     .zi.eql {
       color: var(--eql-color);
+    }
+    #root.default .zi.eql {
       background: var(--eql-background);
     }
-    .zi.loc {
-      color: var(--loc-color);
-      background: var(--loc-background) 
+    #root.default .zi.eql.loc {
+      background: var(--loc-background);
     }
     .zi.drop {
       color: var(--drop-color);
@@ -84,6 +94,17 @@
       width: 80px;
       top: 0;
       right: 0;
+    }
+    #fx {
+      position: absolute;
+      display: inline-block;
+      width: 80px;
+      top: 0;
+      left: 0;
+    }
+    .hide {
+      position: absolute;
+      top: -100px;
     }
   </style>
 </head>
@@ -135,18 +156,28 @@
       <div class="zi z4"></div>
     </div>
     <div id="cyid" onclick="setId()"></div>
+    <div id="fx" onclick="share()">分享</div>
   </div>
   <script>
       console.log('你好呀，程序员，可以加我微信一起交流：maqijun123456');
       var tarCy = '天下第一';
       var isRandom = true
+      var randomId;
+      var isChinaYear = false;
+      var isPyMode = false;
+      if (isChinaYear) {
+        document.getElementById('root').classList.remove('default');
+        document.getElementById('root').classList.add('china-year');
+      } else {
+        document.getElementById('root').classList.remove('china-year');
+        document.getElementById('root').classList.add('default');
+      }
       if (isRandom) {
-        var randomId;
         if (window.location.href.indexOf('cyid') > -1) {
           randomId = window.location.href.match(/cyid=(\d*)/)[1]
         } else {
           randomId = Math.random()*cys.length|0;
-          window.history.pushState({id: 1,name: "SpecialGame"}, "SpecialGame", "/cyle/?cyid="+randomId);
+          // window.history.pushState({id: 1,name: "SpecialGame"}, "SpecialGame", "/cyle/?cyid="+randomId);
         }
         cyid.innerHTML = randomId;
         tarCy = cys[randomId];
@@ -157,6 +188,20 @@
         if (specialCyId) {
           window.location.href = "/cyle/?cyid="+specialCyId
         }
+      }
+      function share() {
+        var url = window.location.href;
+        function copy(value) {
+          var oInput = document.createElement("input");  //input 的ID
+          oInput.className = 'hide'
+          document.body.appendChild(oInput)
+          oInput.value = value
+          oInput.select(); //选择对象  
+          document.execCommand("Copy"); //执行浏览器复制命令
+          document.body.removeChild(oInput)
+        }
+        copy(window.location.host+"/cyle/?cyid="+randomId)
+        alert('已将本成语对应的网址复制到剪切板，可以粘贴分享给朋友们了')
       }
       var nowId = 1;
       var checkCnt = 0;
@@ -224,9 +269,10 @@
             zi_ele.classList.remove('py');
             zi_ele.classList.remove('loc');
             zi_ele.classList.remove('eql');
-            // if (pyArr[i]) zi_ele.classList.add('py');
+            if (pyArr[i] && isPyMode) zi_ele.classList.add('py');
             if (locArr[i]) zi_ele.classList.add('loc');
             if (eqlArr[i]) zi_ele.classList.add('eql');
+            else if(!isPyMode) zi_ele.classList.add('drop')
             var box_zis_num = box_zis.indexOf(zi) + 1;
             if (box_zis_num > 0) {
               var box_zi_ele = document.querySelector('#box .zi.z'+box_zis_num);
@@ -273,8 +319,11 @@
         // 位置，一样则底色变红
         var checkArr = []
         for (var i = 0; i < 4; i++) {
-          // var isLoc = src[i].spell()[0] === tar[i].spell()[0] // 首字母对就算对
-          var isLoc = src[i] === tar[i] // 字一样才算对
+          if (isPyMode) {
+            var isLoc = src[i].spell()[0] === tar[i].spell()[0] // 首字母对就算对
+          } else {
+            var isLoc = src[i] === tar[i] // 字一样才算对
+          }
           checkArr.push(isLoc)
         }
         return checkArr
