@@ -15,20 +15,25 @@
       --background: #efefef;
       --loc-background: #c22828;
       --color: #999999;
+      --drop-color: #cccccc;
       --py-color: #12171b;
       --eql-color: #e1d791;
       --font-size: 28px;
     }
+    #box {
+      border: 2px solid var(--background);
+      padding: 2px;
+      margin-top: 2px;
+    }
     .chengyu {
       font-size: 0;
-      margin-top: 5px;
     }
     .chengyu:first-child {
       margin-left: 0px;
     }
     .zi {
       display: inline-block;
-      margin-left: 5px;
+      margin: 2px;
       width: 60px;
       height: 60px;
       color: var(--color);
@@ -37,9 +42,6 @@
       vertical-align: middle;
       line-height: 60px;
       font-size: var(--font-size);
-    }
-    .zi:first-child {
-      margin-left: 0px;
     }
     .zi.py {
       color: var(--py-color) 
@@ -50,22 +52,62 @@
     .zi.eql {
       color: var(--eql-color)
     }
+    .zi.drop {
+      color: var(--drop-color)
+    }
     #input {
-      margin-top: 10px;
+      margin: 10px 0px;
     }
   </style>
 </head>
 <body>
   <div class="box" id="root">
-    <div class="chengyu" id="c1">
+    <div class="chengyu" id="c">
       <div class="zi z1">天</div>
       <div class="zi z2"></div>
       <div class="zi z3"></div>
       <div class="zi z4"></div>
     </div>
+    <div class="chengyu" id="box"></div>
+    <input id="input" onsubmit="check()"></input>
+    <button onclick="check()">提交</button>
+    <div class="chengyu" id="c1" style="display: none;">
+      <div class="zi z1"></div>
+      <div class="zi z2"></div>
+      <div class="zi z3"></div>
+      <div class="zi z4"></div>
+    </div>
+    <div class="chengyu" id="c2" style="display: none;">
+      <div class="zi z1"></div>
+      <div class="zi z2"></div>
+      <div class="zi z3"></div>
+      <div class="zi z4"></div>
+    </div>
+    <div class="chengyu" id="c3" style="display: none;">
+      <div class="zi z1"></div>
+      <div class="zi z2"></div>
+      <div class="zi z3"></div>
+      <div class="zi z4"></div>
+    </div>
+    <div class="chengyu" id="c4" style="display: none;">
+      <div class="zi z1"></div>
+      <div class="zi z2"></div>
+      <div class="zi z3"></div>
+      <div class="zi z4"></div>
+    </div>
+    <div class="chengyu" id="c5" style="display: none;">
+      <div class="zi z1"></div>
+      <div class="zi z2"></div>
+      <div class="zi z3"></div>
+      <div class="zi z4"></div>
+    </div>
+    <div class="chengyu" id="c6" style="display: none;">
+      <div class="zi z1"></div>
+      <div class="zi z2"></div>
+      <div class="zi z3"></div>
+      <div class="zi z4"></div>
+    </div>
   </div>
-  <input id="input" onsubmit="check()"></input>
-  <button onclick="check()">提交</button>
   <script>
       console.log('汉字'.spell());
       var tarCy = '天下第一';
@@ -74,8 +116,38 @@
         tarCy = cys[Math.random()*cys.length|0];
         document.querySelector('.z1').innerHTML = '';
       }
-      var nowId = '1';
+      var nowId = 1;
       var checkCnt = 0;
+
+      function getBoxZis(size=10) {
+        var box = document.querySelector('#box');
+        var box_zis = []
+        var true_zi = tarCy[Math.random() * tarCy.length | 0];
+        var true_idx = Math.random() * size | 0;
+        while (box_zis.length < size) {
+          if (box_zis.length === true_idx) {
+            box_zis.push(true_zi);
+            continue;
+          }
+          var other_cy = cys[Math.random() * cys.length | 0];
+          console.log(other_cy)
+          var other_zi = other_cy[Math.random() * other_cy.length | 0].replace(/\s/g, '');
+          console.log(other_zi)
+          if (box_zis.indexOf(other_zi) == -1 && other_zi != true_zi) {
+            box_zis.push(other_zi);
+          }
+        }
+        for (var i = 0; i < box_zis.length; i++) {
+          var zi = box_zis[i];
+          var zi_el = document.createElement('div');
+          zi_el.className = 'zi';
+          zi_el.classList.add('z'+(i+1));
+          zi_el.innerHTML = zi;
+          box.appendChild(zi_el);
+        }
+        return box_zis;
+      }
+      var box_zis = getBoxZis()
 
       function check() {
         var input = document.getElementById('input');
@@ -101,25 +173,42 @@
         var locArr = checkLoc(value, tarCy);
         var eqlArr = checkEql(value, tarCy);
         console.log(pyArr, locArr, eqlArr)
-        for (var i = 0; i < 4; i++) {
-          var num = i + 1;
-          var zi = document.querySelector('#c' + nowId + ' .zi.z' + num);
-          zi.innerHTML = value[i];
-          zi.classList.remove('py');
-          zi.classList.remove('loc');
-          zi.classList.remove('eql');
-          if (pyArr[i]) zi.classList.add('py');
-          if (locArr[i]) zi.classList.add('loc');
-          if (eqlArr[i]) zi.classList.add('eql');
+        update_cy('');
+        update_cy(nowId);
+        function update_cy(nowId) {
+          document.querySelector('#c'+nowId).style.display = 'block';
+          for (var i = 0; i < 4; i++) {
+            var num = i + 1;
+            var zi = value[i];
+            var zi_ele = document.querySelector('#c' + nowId + ' .zi.z' + num);
+            zi_ele.innerHTML = value[i];
+            zi_ele.classList.remove('py');
+            zi_ele.classList.remove('loc');
+            zi_ele.classList.remove('eql');
+            if (pyArr[i]) zi_ele.classList.add('py');
+            if (locArr[i]) zi_ele.classList.add('loc');
+            if (eqlArr[i]) zi_ele.classList.add('eql');
+            var box_zis_num = box_zis.indexOf(zi) + 1;
+            console.log(box_zis_num, '#box .zi.z'+box_zis_num)
+            if (box_zis_num > 0) {
+              var box_zi_ele = document.querySelector('#box .zi.z'+box_zis_num);
+              if (eqlArr[i] && box_zi_ele.className.indexOf('eql') === -1) {
+                box_zi_ele.classList.add('eql');
+              }
+              if (!eqlArr[i] && box_zi_ele.className.indexOf('drop') === -1) {
+                box_zi_ele.classList.add('drop');
+              }
+            }
+          }
         }
-        checkCnt++;
         var isPass = eqlArr[0] && eqlArr[1] && eqlArr[2] && eqlArr[3] && locArr[0] && locArr[1] && locArr[2] && locArr[3];
         if (isPass) {
-          alert('恭喜你，答对了！');
-        } else if (isRandom && checkCnt >= 6) {
-          alert(tarCy);
+          setTimeout(()=>{alert('恭喜你，答对了！');});
+        } else if (nowId >= 6) {
+          setTimeout(()=>{alert(tarCy)});
           return;
         }
+        nowId++;
       }
 
       // 默认白底灰字
