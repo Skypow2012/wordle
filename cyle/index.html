@@ -3,21 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="./js/cys.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
   <title>成语le</title>
   <style>
+    body {
+      text-align: center;
+    }
     #root {
       --background: #efefef;
       --loc-background: #c22828;
       --color: #999999;
       --py-color: #12171b;
       --eql-color: #e1d791;
-      --font-size: 28px
+      --font-size: 28px;
+    }
+    .chengyu {
+      font-size: 0;
+      margin-top: 5px;
+    }
+    .chengyu:first-child {
+      margin-left: 0px;
     }
     .zi {
       display: inline-block;
+      margin-left: 5px;
       width: 60px;
       height: 60px;
       color: var(--color);
@@ -26,6 +37,9 @@
       vertical-align: middle;
       line-height: 60px;
       font-size: var(--font-size);
+    }
+    .zi:first-child {
+      margin-left: 0px;
     }
     .zi.py {
       color: var(--py-color) 
@@ -50,16 +64,23 @@
       <div class="zi z4"></div>
     </div>
   </div>
-  <input id="input"></input>
+  <input id="input" onsubmit="check()"></input>
   <button onclick="check()">提交</button>
   <script>
       console.log('汉字'.spell());
       var tarCy = '天下第一';
+      var isRandom = window.location.href.indexOf('random') > -1
+      if (isRandom) {
+        tarCy = cys[Math.random()*cys.length|0];
+        document.querySelector('.z1').innerHTML = '';
+      }
       var nowId = '1';
+      var checkCnt = 0;
 
       function check() {
         var input = document.getElementById('input');
         var value = input.value || '';
+        value = value.replace(/\s/g, '')
         if (value.length === 0) {
           alert('请输入成语');
           return;
@@ -90,6 +111,14 @@
           if (pyArr[i]) zi.classList.add('py');
           if (locArr[i]) zi.classList.add('loc');
           if (eqlArr[i]) zi.classList.add('eql');
+        }
+        checkCnt++;
+        var isPass = eqlArr[0] && eqlArr[1] && eqlArr[2] && eqlArr[3] && locArr[0] && locArr[1] && locArr[2] && locArr[3];
+        if (isPass) {
+          alert('恭喜你，答对了！');
+        } else if (isRandom && checkCnt >= 6) {
+          alert(tarCy);
+          return;
         }
       }
 
@@ -130,10 +159,6 @@
       function checkIsCy(src) {
         return cys.indexOf(src) > -1;
       }
-  </script>
-  <script>
-    const target = '天下第一'
-    
   </script>
 </body>
 </html>
