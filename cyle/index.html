@@ -231,6 +231,7 @@
       var cyid;
       var isChinaYear = false;
       var isPyMode = false;
+      var history_cy = [];
       if (isChinaYear) {
         document.getElementById('root').classList.remove('default');
         document.getElementById('root').classList.add('china-year');
@@ -341,6 +342,7 @@
         return box_zis;
       }
       var box_zis = getBoxZis()
+      localStorage.box_zis = JSON.stringify(box_zis);
 
       function check() {
         var input = document.getElementById('input');
@@ -427,6 +429,8 @@
           // setTimeout(()=>{alert(tarCy)}); // 给答案
           // return;
         }
+        history_cy.push(value)
+        localStorage.history_cy = JSON.stringify(history_cy);
         nowId++;
       }
 
