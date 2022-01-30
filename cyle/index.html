@@ -226,6 +226,9 @@
   </div>
   <script>
       console.log('你好呀，程序员，可以加我微信一起交流：maqijun123456');
+      var uid = localStorage.uid || Math.random().toString().substr(2, 10);
+      localStorage.uid = uid;
+      var name = localStorage.name;
       var tarCy = '天下第一';
       var isRandom = true
       var cyid;
@@ -253,9 +256,14 @@
         tarCy = cys[cyid];
         document.querySelector('.z1').innerHTML = '';
       }
+      var box_zis = getBoxZis()
       if (!localStorage.isOld) {
         openHelp()
       }
+      req('POST', '/cyleApi/set', {
+        type: 'in',
+        info: box_zis.join('')
+      })
       function openHelp() {
         console.log('jopen')
         var help_ele = document.getElementById('help');
@@ -286,25 +294,39 @@
         copy(window.location.host+"/cyle/?cyid="+cyid)
         alert('已将本成语对应的网址复制到剪切板，可以粘贴分享给朋友们了')
       }
+      function req(method='GET',url,data='',callback=()=>{}) {
+        var xhr = new XMLHttpRequest();
+          xhr.open(method, url, true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          if (method === 'POST') {
+            data.name = name;
+            data.cyid = cyid;
+            data.uid = uid;
+            data = JSON.stringify(data)
+          }
+          xhr.send(data);
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+              callback(xhr)
+            }
+          }
+      }
       function feedback() {
         var fk = prompt('请输入反馈内容（不要带emoji哈）');
         if (!fk) return;
-        var name = localStorage.name || prompt('请输入您的称呼或联系方式(方便后续区分)，仅需输入一次');
+        name = localStorage.name || prompt('请输入您的称呼或联系方式(方便后续区分)，仅需输入一次');
         localStorage.name = name;
         if (fk) {
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', '//tekii.cn/log?type=cydl&remark='+fk + '|' + name + '|' + cyid, true);
-          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-          xhr.send('');
-          xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-              if (xhr.status == 200) {
-                alert('反馈成功，感谢您的反馈！')
-              } else {
-                alert('失败了T^T，可能是网络问题，也可能是反馈内容包含了无法识别的表情')
-              }
+          req('POST', '/cyleApi/set', {
+            type: 'feebback',
+            info: fk,
+          }, function(xhr) {
+            if (xhr.status == 200) {
+              alert('反馈成功，感谢您的反馈！')
+            } else {
+              alert('失败了T^T，可能是网络问题，也可能是反馈内容包含了无法识别的表情')
             }
-          }
+          })
         }
       }
       var nowId = 1;
@@ -341,13 +363,16 @@
         }
         return box_zis;
       }
-      var box_zis = getBoxZis()
       localStorage.box_zis = JSON.stringify(box_zis);
 
       function check() {
         var input = document.getElementById('input');
         var value = input.value || '';
         value = value.replace(/\s/g, '')
+        req('POST', '/cyleApi/set', {
+          type: 'check',
+          info: value,
+        })
         if (value.length === 0) {
           alert('请输入成语');
           return;
@@ -414,14 +439,29 @@
         }
         var isPass = eqlArr[0] && eqlArr[1] && eqlArr[2] && eqlArr[3] && locArr[0] && locArr[1] && locArr[2] && locArr[3];
         if (isPass) {
+          var times = nowId;
           setTimeout(()=>{
             alert('恭喜你，答对了！');
             if (window.location.href.indexOf('tekii.cn') > -1) { // 可以去新的关卡了
               window.history.pushState({id: 1,name: "SpecialGame"}, "SpecialGame", "/cyle/");
             }
+            if (!name) {
+              name = prompt('你的昵称？用于记录通关情况');
+              if (name) {
+                localStorage.name = name;
+              }
+            }
             if (confirm('想看看 '+tarCy+' 的具体解释么？')) {
               window.location.href = 'https://hanyu.baidu.com/zici/s?wd=' + encodeURIComponent(tarCy);
             }
+            req('POST', '/cyleApi/set', {
+              type: 'win',
+              info: JSON.stringify({
+                box_zis: box_zis.join(''),
+                history_cy: history_cy.join('|'),
+                times,
+              }),
+            })
           });
           
         } else if (nowId >= 6) {
