@@ -5,9 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <script src="./js/cys2.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
-  <script src="/log?type=cydl&remark=new"></script>
-  <title>成语le</title>
+  <title>成语乐</title>
   <style>
     body {
       text-align: center;
@@ -68,35 +66,63 @@
       margin: 2px;
       width: 60px;
       height: 60px;
+      color: black;
       color: var(--color);
+      background-color: #cccccc;
       background-color: var(--background);
       text-align: center;
       vertical-align: middle;
       line-height: 60px;
+      font-size: 28px;
       font-size: var(--font-size);
+      border: 2px solid #cccccc;
       border: 2px solid var(--border-color);
       border-width: var(--zi-border-width);
+    }
+    .zi.drop,
+    .zi.loc,
+    .zi.eql {
+      // animation: ease flip 1s;
+      // opacity: 0;
+    }
+    .zi.z1 {
+      animation-delay: 0s;
+    }
+    .zi.z2 {
+      animation-delay: 1s;
+    }
+    .zi.z3 {
+      animation-delay: 2s;
+    }
+    .zi.z4 {
+      animation-delay: 3s;
     }
     .zi.py {
       color: var(--py-color);
     }
     .zi.loc {
+      background: #69a86a;
       background: var(--loc-background) 
     }
     #root.default .zi.loc {
       color: var(--loc-color);
     }
     .zi.eql {
+      color: #ffffff;
       color: var(--eql-color);
     }
     #root.default .zi.eql {
+      background: #c9b457;
       background: var(--eql-background);
     }
     #root.default .zi.eql.loc {
+      background: #69a86a;
       background: var(--loc-background);
     }
     .zi.drop {
+      color: #ffffff;
       color: var(--drop-color);
+      background: #7d7d7d;
       background: var(--drop-background);
     }
     #input {
@@ -106,7 +132,7 @@
     #cyid,
     #fx,
     #help-icon,
-    #close-help {
+    .close {
       position: absolute;
       display: inline-block;
       width: 80px;
@@ -125,7 +151,7 @@
       left: 0;
       right: 0;
     }
-    #close-help {
+    .close {
       width: 60px;
       right: 0;
       background: var(--background);
@@ -139,7 +165,8 @@
       position: absolute;
       top: -100px;
     }
-    #help {
+    #help,
+    #static {
       position: absolute;
       top: 0;
       right: 0;
@@ -154,7 +181,8 @@
       background: #ffffff;
       border-radius: 4px;
     }
-    #help #help-container {
+    #help #help-container,
+    #static #static-container {
       position: absolute;
       left: 0;
       top: 0;
@@ -165,6 +193,14 @@
       padding: 4px;
       height: 100%;
       overflow: auto;
+    }
+    #static-texts {
+      text-align: left;
+      max-width: 300px;
+      margin: auto;
+    }
+    #static-texts h2 {
+      text-align: center;
     }
     .img {
       width: 100%;
@@ -190,18 +226,31 @@
     /* ::-webkit-scrollbar-thumb:window-inactive {
       background:rgba(255,0,0,0.4);
     } */
+    @keyframes flip {
+      0% {
+        transform: rotateX(0deg);
+        opacity: 0;
+      }
+      50% {
+        transform: rotateX(90deg);
+      }
+      100% {
+        transform: rotateX(0deg);
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
   <div class="box" id="root">
-    <div class="chengyu" id="c">
+    <div class="chengyu" id="c" onclick="input.focus()">
       <div class="zi z1">天</div>
       <div class="zi z2"></div>
       <div class="zi z3"></div>
       <div class="zi z4"></div>
     </div>
-    <div class="chengyu" id="box"></div>
+    <div class="chengyu" id="box" onclick="alert('请在下方输入框输入你猜的成语~然后点击提交按钮')"></div>
     <input id="input" onsubmit="check()"></input>
     <button onclick="check()">提交</button>
     <div id="history"></div>
@@ -210,16 +259,24 @@
     <div id="fk" onclick="feedback()">反馈</div>
     <div id="help-icon" onclick="openHelp()">❓</div>
     <div id="help" style="display: none;">
-      <div id="close-help" onclick="closeHelp()">关闭</div>
+      <div id="close-help" class="close" onclick="closeHelp()">关闭</div>
       <div id="help-container">
       <div>
-        <h2>盲猜成语游戏规则</h2>
+        <h2>成语乐游戏规则</h2>
 <p>1. 猜的必须为成语，猜一次点击“提交”，系统自动存档，非成语会提示“请输入正确的成语”且该次不存档</p>
 <p>2. 如果正确输入成语，系统却提示“请输入正确的成语”，请点击左上角“反馈”，成语库需要大家的支持完善～</p>
 <p>3. 右上角数字代码点击后可以重新生成当前关卡，适合分享给小伙伴一起玩😊</p>
 <p>4. 每次猜成语后，备选区用过的字以及猜的成语中的字会变颜色，具体颜色变化会在下方图片中说明</p>
       </div>
       <img class="img" src="img/help2.jpg"/>
+      </div>
+    </div>
+    <div id="static" style="display: none;">
+      <div id="close-static" class="close" onclick="closeStatic()">关闭</div>
+      <div id="static-container">
+      <div id="static-texts">
+        <h2>当前成语统计</h2>
+      </div>
       </div>
     </div>
   </div>
@@ -229,10 +286,18 @@
       var uid = localStorage.uid || Math.random().toString().substr(2, 10);
       localStorage.uid = uid;
       var name = localStorage.name;
+      if (name == 'undefined' || name == 'null') name = '';
       var tarCy = '天下第一';
       var isRandom = true
       var cyid;
       var isChinaYear = false;
+      if (window.location.href.indexOf('xnkl') > -1) {
+	isChinaYear = true;
+	document.body.style.background = '#000000';
+	document.body.style.color = '#ffffff';
+	static.style.background = '#000000';
+	help.style.background = '#000000';
+      }
       var isPyMode = false;
       var history_cy = [];
       if (isChinaYear) {
@@ -264,6 +329,55 @@
         type: 'in',
         info: box_zis.join('')
       })
+      // 统计当前成语尝试情况
+      req('GET', '/cyleApi/get?cyid='+cyid, '', function(xhr) {
+        const body = JSON.parse(xhr.responseText)
+        const info = body.info || {};
+        const cyInfos = body.info[cyid] || [];
+	window.cyInfos = cyInfos;
+        let firstWinInfo;
+	let myFirstWinInfo;
+        let allSeePersons = 0;
+        let personDic = {};
+        let meCheckTimes = 0;
+        let allCheckTimes = 0;
+        for (let i = 0; i < cyInfos.length; i++) {
+          const cyInfo = cyInfos[i];
+          if (!firstWinInfo && cyInfo.type === 'win') {
+            firstWinInfo = cyInfo;
+          }
+	  if (!myFirstWinInfo && cyInfo.type === 'win' && cyInfo.uid == uid) {
+	    myFirstWinInfo = cyInfo;
+	  }
+          if (cyInfo.type === 'check') {
+            allCheckTimes++;
+            if (cyInfo.uid == uid) {
+              meCheckTimes++;
+            }
+          }
+          personDic[cyInfo.uid] = personDic[cyInfo.uid] || [];
+        }
+        allSeePersons = Object.keys(personDic).length;
+        let firstWinName = firstWinInfo ? firstWinInfo.name : '还未有人通过';
+        let firstWinTime = firstWinInfo ? new Date(firstWinInfo.add_time).toLocaleString() : '无';
+        let myFirstWinTime = myFirstWinInfo ? new Date(myFirstWinInfo.add_time).toLocaleString() : '无';
+        var staticTextsEle = document.getElementById('static-texts');
+        addP(staticTextsEle, '围观人数：'+allSeePersons);
+        addP(staticTextsEle, '尝试人次：'+allCheckTimes);
+        addP(staticTextsEle, '我的次数：'+meCheckTimes);
+        addP(staticTextsEle, '首通人：'+firstWinName);
+        addP(staticTextsEle, '首通时间：'+firstWinTime);
+        addP(staticTextsEle, '我的首通：'+myFirstWinTime);
+        document.getElementById('static').style.display = 'block';
+        function addP(parent, text) {
+          var p = document.createElement('p');
+          p.innerHTML = text;
+          parent.appendChild(p);
+        }
+      })
+      function closeStatic() {
+        document.getElementById('static').style.display = 'none';
+      }
       function openHelp() {
         console.log('jopen')
         var help_ele = document.getElementById('help');
@@ -277,7 +391,9 @@
       function setId() {
         var specialCyId = prompt('请输入成语id');
         if (specialCyId) {
-          window.location.href = "/cyle/?cyid="+specialCyId
+          if (specialCyId.indexOf('id:') > -1) alert(cys[parseInt(specialCyId.split(':')[1])])
+          else if (specialCyId.indexOf('cy:') > -1) alert(cys.indexOf(specialCyId.split(':')[1]))
+          else window.location.href = "/cyle/?cyid="+specialCyId
         }
       }
       function share() {
@@ -315,10 +431,10 @@
         var fk = prompt('请输入反馈内容（不要带emoji哈）');
         if (!fk) return;
         name = localStorage.name || prompt('请输入您的称呼或联系方式(方便后续区分)，仅需输入一次');
-        localStorage.name = name;
+        if (name) localStorage.name = name;
         if (fk) {
           req('POST', '/cyleApi/set', {
-            type: 'feebback',
+            type: 'feedback',
             info: fk,
           }, function(xhr) {
             if (xhr.status == 200) {
@@ -339,7 +455,7 @@
         while (box_zis.length < size) { // 随机取对应值
           var other_cy = cys[Math.random() * cys.length | 0];
           var other_zi = other_cy[Math.random() * other_cy.length | 0].replace(/\s/g, '');
-          if (box_zis.indexOf(other_zi) == -1) {
+          if (box_zis.indexOf(other_zi) == -1 && other_zi !== ' ') {
             box_zis.push(other_zi);
           }
         }
@@ -445,7 +561,8 @@
             if (window.location.href.indexOf('tekii.cn') > -1) { // 可以去新的关卡了
               window.history.pushState({id: 1,name: "SpecialGame"}, "SpecialGame", "/cyle/");
             }
-            if (!name) {
+            if (!name || name == 'undefined'||name == 'null') {
+              console.log('name', name)
               name = prompt('你的昵称？用于记录通关情况');
               if (name) {
                 localStorage.name = name;
@@ -478,6 +595,7 @@
       function checkPy(src, tar) {
         // 首字母，一样则颜色变黑
         var checkArr = []
+	return checkArr
         for (var i = 0; i < 4; i++) {
           var isPy = false;
           for (var j = 0; j < 4; j++) {
