@@ -79,12 +79,12 @@
       border: 2px solid var(--border-color);
       border-width: var(--zi-border-width);
     }
-    .zi.drop,
+    /* .zi.drop,
     .zi.loc,
     .zi.eql {
-      // animation: ease flip 1s;
-      // opacity: 0;
-    }
+      animation: ease flip 1s;
+      opacity: 0;
+    } */
     .zi.z1 {
       animation-delay: 0s;
     }
@@ -239,6 +239,29 @@
         opacity: 1;
       }
     }
+    .input-area {
+      position: relative;
+    }
+    .candidate-area {
+      /* display: inline-block; */
+      display: none;
+      position: absolute;
+      top: 41px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      width: 230px;
+      height: 25px;
+      border-style: solid;
+      border-width: 2px;
+      border-color: var(--border-color);
+      background-color: white;
+    }
+    .candidate-area>.candidate {
+      width: 100%;
+      height: 21px;
+      border-bottom: 2px solid var(--border-color);
+    }
   </style>
 </head>
 <body>
@@ -251,8 +274,15 @@
       <div class="zi z4"></div>
     </div>
     <div class="chengyu" id="box" onclick="alert('请在下方输入框输入你猜的成语~然后点击提交按钮')"></div>
-    <input id="input"></input>
-    <button onclick="check()">提交</button>
+    <div class="input-area">
+      <input id="input" oninput="onInput(event.target.value)"></input>
+      <button onclick="check()">提交</button>
+      <div class="candidate-area" id="candidateArea">
+        <!-- <div class="candidate">1234</div>
+        <div class="candidate">1234</div>
+        <div class="candidate">1234</div> -->
+      </div>
+    </div>
     <div id="history"></div>
     <div id="cyid" onclick="setId()"></div>
     <!-- <div id="fx" onclick="share()">分享</div> -->
@@ -481,10 +511,16 @@
       }
       localStorage.box_zis = JSON.stringify(box_zis);
 
-      function check() {
+      function check(val='') {
+        // 防止重复点击，或oninput拼音导致的重复中文
+        let checkTs = Date.now();
+        if (window.checkTs && checkTs - window.checkTs < 500) return;
+        window.checkTs = checkTs;
+
         var input = document.getElementById('input');
-        var value = input.value || '';
+        var value = val || input.value || '';
         value = value.replace(/\s/g, '')
+        console.log('value', value)
         req('POST', '/cyleApi/set', {
           type: 'check',
           info: value,
@@ -586,6 +622,7 @@
           // setTimeout(()=>{alert(tarCy)}); // 给答案
           // return;
         }
+        clearInput();
         history_cy.push(value)
         localStorage.history_cy = JSON.stringify(history_cy);
         nowId++;
@@ -632,6 +669,36 @@
       }
       function checkIsCy(src) {
         return cys.indexOf(src) > -1;
+      }
+      var cysStr = cys.join('');
+      function onInput(val) {
+        val = val.replace(/\s/g, '');
+        console.log('onInput', val)
+        candidateArea.innerHTML = '';
+        if (val.length === 4 && cys.indexOf(val) > -1) {
+          check(val);
+          return;
+        }
+        let idx = -1;
+        for (let i = 0; i < val.length; i++) {
+          idx = cysStr.indexOf(val)
+        }
+        if (idx == -1) {
+          candidateArea.style.display = 'none';
+          return;
+        }
+        console.log(idx);
+        var candidate = document.createElement('div');
+        candidate.innerText = cys[idx/4|0];
+        candidate.onclick = function() {
+          check(this.innerText);
+        }
+        candidateArea.appendChild(candidate);
+        candidateArea.style.display = 'inline-block';
+      }
+      function clearInput() {
+          input.value = '';
+          candidateArea.style.display = 'none';
       }
   </script>
 </body>
