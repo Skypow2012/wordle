@@ -251,7 +251,7 @@
       <div class="zi z4"></div>
     </div>
     <div class="chengyu" id="box" onclick="alert('请在下方输入框输入你猜的成语~然后点击提交按钮')"></div>
-    <input id="input" onsubmit="check()"></input>
+    <input id="input"></input>
     <button onclick="check()">提交</button>
     <div id="history"></div>
     <div id="cyid" onclick="setId()"></div>
@@ -568,9 +568,6 @@
                 localStorage.name = name;
               }
             }
-            if (confirm('想看看 '+tarCy+' 的具体解释么？')) {
-              window.location.href = 'https://hanyu.baidu.com/zici/s?wd=' + encodeURIComponent(tarCy);
-            }
             req('POST', '/cyleApi/set', {
               type: 'win',
               info: JSON.stringify({
@@ -579,6 +576,9 @@
                 times,
               }),
             })
+            if (confirm('想看看 '+tarCy+' 的具体解释么？')) {
+              window.location.href = 'https://hanyu.baidu.com/zici/s?wd=' + encodeURIComponent(tarCy);
+            }
           });
           
         } else if (nowId >= 6) {
